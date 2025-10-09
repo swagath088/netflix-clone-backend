@@ -1,0 +1,99 @@
+from django.shortcuts import render
+from . serializers import Userserializer,Movieserializer,Movieupdateserializer
+from rest_framework import status
+from rest_framework.status import HTTP_200_OK,HTTP_201_CREATED,HTTP_400_BAD_REQUEST
+from rest_framework.exceptions import ValidationError
+from django.contrib.auth.hashers import make_password
+from rest_framework.response import Response
+from rest_framework.views import APIView
+import os
+from django.contrib.auth import authenticate
+from django.db.models import Q
+import re
+from django.conf import settings
+from django.http import FileResponse
+from rest_framework.authtoken.models import Token
+
+from .models import Movies
+# Create your views here.
+class register(APIView):
+    def post(self,request):
+        obj=Userserializer(data=request.data)
+        if obj.is_valid()==True:
+            res=obj.save()
+            res.password=make_password(res.password)
+            res.save()
+            token=Token.objects.create(user=res)
+            return Response(status=HTTP_201_CREATED)
+        else:
+            return Response( obj.errors,status=HTTP_400_BAD_REQUEST)
+class Add(APIView):
+    def post(self,request):
+       obj= Movieserializer(data=request.data)
+       if obj.is_valid():
+           obj.save()
+           return Response(status=HTTP_201_CREATED)
+       else:
+           return Response(obj.errors,status=HTTP_400_BAD_REQUEST)
+
+class show(APIView):
+    def get(self,request):
+        obj=Movies.objects.all()
+        serializer_obj=Movieserializer(obj,many=True)
+        return Response(serializer_obj.data,status=HTTP_200_OK)
+    
+class StreamVideo(APIView):
+    def get(self, request, filename):
+        # path of the video inside media/videos/
+        file_path = os.path.join(settings.MEDIA_ROOT, "videos", filename)
+
+        # open file and return it in chunks
+        return FileResponse(open(file_path, 'rb'), content_type='video/mp4')
+
+class get(APIView):
+    def get(self, request, pk):
+        movies = Movies.objects.filter(
+            Q(movie_no__iexact=pk) | Q(movie_name__icontains=pk)
+        )
+
+        if not movies.exists():
+            return Response({'error': 'Movie not found'}, status=HTTP_400_BAD_REQUEST)
+
+        serializer = Movieserializer(movies, many=True)
+        return Response(serializer.data)
+class delete(APIView):
+    def delete(self,request,pk):
+        try:
+            movies=Movies.objects.get(movie_no=pk)
+            movies.delete()
+            return Response({'movie':'deleted'})
+        except:
+            return Response({'error':'movie not found'}, status=HTTP_400_BAD_REQUEST )
+class put(APIView):
+    def put(self,request,pk):
+        try:
+            obj=Movies.objects.get(movie_no=pk)
+            res=Movieupdateserializer(obj,data=request.data,partial=True)
+            if res.is_valid():
+                res.save()
+                return Response(status=HTTP_200_OK)
+            else:
+                return Response(res.errors,status=HTTP_400_BAD_REQUEST)
+        except Movies.DoesNotExist:
+            return Response({'movie':'not found'},status=HTTP_400_BAD_REQUEST)
+        
+class Login(APIView):
+    def post(self, request):
+        username = request.data.get("username")
+        password = request.data.get("password")
+
+        user = authenticate(username=username, password=password)
+        if user:
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({
+                "token": token.key,
+                "username": user.username,
+                "is_superuser": user.is_superuser
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
