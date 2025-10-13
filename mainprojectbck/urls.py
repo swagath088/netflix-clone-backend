@@ -20,6 +20,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.shortcuts import redirect  # needed for redirect
+from mainapp.views import make_superuser 
 
 # Define the redirect function first
 def redirect_to_mainapp(request):
@@ -29,6 +30,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', redirect_to_mainapp),  # root URL
     path('mainapp/', include('mainapp.urls')),
+    path('make_superuser/', make_superuser)
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
