@@ -27,6 +27,7 @@ SECRET_KEY = 'django-insecure-1k4#0can1!g!2(%^p4o1z(u1pco_s_h#uz+mwz4t82vuq=bpfp
 DEBUG = True
 
 
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -77,14 +78,21 @@ WSGI_APPLICATION = 'mainprojectbck.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+#DATABASES = {
+#   'default': {
+#       'ENGINE': 'django.db.backends.mysql',  # MySQL engine
+#       'NAME': 'project',          # Replace with your DB name
+#       'USER': 'root',         # MySQL username
+#       'PASSWORD': '@17112002',     # MySQL password
+#       'HOST': 'localhost',                   # Usually localhost
+#       'PORT': '3306',                        # Default MySQL port
+#   }
+#}
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',  # MySQL engine
-        'NAME': 'project',          # Replace with your DB name
-        'USER': 'root',         # MySQL username
-        'PASSWORD': '@17112002',     # MySQL password
-        'HOST': 'localhost',                   # Usually localhost
-        'PORT': '3306',                        # Default MySQL port
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
