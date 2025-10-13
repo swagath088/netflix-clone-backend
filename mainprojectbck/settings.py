@@ -26,8 +26,6 @@ SECRET_KEY = 'django-insecure-1k4#0can1!g!2(%^p4o1z(u1pco_s_h#uz+mwz4t82vuq=bpfp
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -153,4 +151,4 @@ STATIC_URL = '/static/'
 # Directory where collectstatic will put all static files
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-ALLOWED_HOSTS = ["https://netflix-clone-backend-39ch.onrender.com"]
+ALLOWED_HOSTS = ["netflix-clone-backend-39ch.onrender.com"]
