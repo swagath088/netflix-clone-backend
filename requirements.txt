@@ -3,3 +3,4 @@ djangorestframework
 pymysql
 pillow
 django-cors-headers
+mysqlclient==2.3.3
