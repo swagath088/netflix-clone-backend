@@ -116,9 +116,9 @@ from django.http import HttpResponse
 def make_superuser(request):
     if not User.objects.filter(username='swagath').exists():
         User.objects.create_superuser(
-            username='swagath',
+            username='Raju',
             email='swagath@example.com',
-            password='YourStrongPassword123'
+            password='Raju123'
         )
         return HttpResponse("Superuser created ✅")
     return HttpResponse("Superuser already exists ⚠️")
