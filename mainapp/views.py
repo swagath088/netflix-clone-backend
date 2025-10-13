@@ -97,3 +97,12 @@ class Login(APIView):
             }, status=status.HTTP_200_OK)
         else:
             return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+        
+class get_one_movie(APIView):
+    def get(self, request):
+        try:
+            movie = Movies.objects.get(movie_no=1)  # or Movies.objects.first()
+            serializer = Movieserializer(movie)
+            return Response(serializer.data, status=HTTP_200_OK)
+        except Movies.DoesNotExist:
+            return Response({"error": "Movie not found"}, status=HTTP_400_BAD_REQUEST)

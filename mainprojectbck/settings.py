@@ -38,9 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
+     'mainapp.apps.MainappConfig',
     'rest_framework',
     'rest_framework.authtoken',
-     'mainapp'
 
 ]
 
@@ -159,5 +159,6 @@ STATIC_URL = '/static/'
 # Directory where collectstatic will put all static files
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ['netflix-clone-backend-1-4ynr.onrender.com', '127.0.0.1', 'localhost']
+
 

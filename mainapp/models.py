@@ -6,3 +6,5 @@ class Movies(models.Model):
     movie_rating=models.IntegerField()
     movie_image=models.ImageField(upload_to='images/')
     movie_video=models.FileField(upload_to='videos/')
+
+    
