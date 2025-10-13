@@ -159,4 +159,5 @@ STATIC_URL = '/static/'
 # Directory where collectstatic will put all static files
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-ALLOWED_HOSTS = ["netflix-clone-backend-39ch.onrender.com"]
+ALLOWED_HOSTS = ["*"]
+
