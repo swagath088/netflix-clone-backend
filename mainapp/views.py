@@ -107,18 +107,21 @@ class get_one_movie(APIView):
         except Movies.DoesNotExist:
             return Response({"error": "Movie not found"}, status=HTTP_400_BAD_REQUEST)
         
-
-from django.urls import path
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 
-# Temporary view to create superuser
+# TEMPORARY: Creates a new superuser
 def make_superuser(request):
-    if not User.objects.filter(username='swagath').exists():
-        User.objects.create_superuser(
-            username='Raju',
-            email='swagath@example.com',
-            password='Raju123'
-        )
-        return HttpResponse("Superuser created ✅")
-    return HttpResponse("Superuser already exists ⚠️")
+    username = 'swagath'  # change if you want a different username
+    password = 'NewStrongPassword123'  # change to your desired password
+    email = 'swagath@example.com'  # your email
+
+    # Delete old user if exists
+    User.objects.filter(username=username).delete()
+
+    # Create superuser
+    User.objects.create_superuser(username=username, email=email, password=password)
+
+    return HttpResponse(f"Superuser '{username}' created successfully ✅")
+
+
