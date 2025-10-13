@@ -148,3 +148,7 @@ CORS_ALLOW_ALL_ORIGINS = True  # for testing only
 
 
 
+STATIC_URL = '/static/'
+
+# Directory where collectstatic will put all static files
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
