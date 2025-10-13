@@ -17,8 +17,8 @@ class MainappConfig(AppConfig):
                     movie_name="Test Movie",
                     movie_desc="Description",
                     movie_rating=5,
-                    movie_image="images/test.jpg",  # make sure file exists in media/
-                    movie_video="videos/test.mp4"   # make sure file exists in media/
+                    movie_image="images/sample.jpg",  # make sure file exists in media/
+                    movie_video="videos/sample.mp4"   # make sure file exists in media/
                 )
         except (OperationalError, ProgrammingError):
             # Happens if tables are not migrated yet
