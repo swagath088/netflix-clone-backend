@@ -4,3 +4,4 @@ pymysql
 pillow
 django-cors-headers
 mysqlclient==2.3.3
+pymysql==1.1.2
