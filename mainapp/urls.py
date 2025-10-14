@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 from rest_framework.authtoken.views import obtain_auth_token
 from .views import make_superuser 
+from .views import DeleteMovie 
 urlpatterns=[
     path('', views.show.as_view(), name='show_all'),
     path('make_superuser/', make_superuser),
@@ -12,6 +13,6 @@ urlpatterns=[
     path('video/<str:filename>/', views.StreamVideo.as_view()),
     path('get/<str:pk>',views.get.as_view()),
     path('put/<int:pk>',views.put.as_view()),
-    path('delete/<int:pk>',views.delete.as_view())
+    path('delete/<int:pk>/', DeleteMovie.as_view(), name='delete-movie'),
 
 ]

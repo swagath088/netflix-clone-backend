@@ -61,14 +61,33 @@ class get(APIView):
 
         serializer = Movieserializer(movies, many=True)
         return Response(serializer.data)
-class delete(APIView):
-    def delete(self,request,pk):
+
+class DeleteMovie(APIView):
+    def delete(self, request, pk):
         try:
-            movies=Movies.objects.get(movie_no=pk)
-            movies.delete()
-            return Response({'movie':'deleted'})
-        except:
-            return Response({'error':'movie not found'}, status=HTTP_400_BAD_REQUEST )
+            movie = Movies.objects.get(movie_no=pk)
+
+            # Delete image file
+            if movie.movie_image:
+                try:
+                    os.remove(os.path.join(settings.MEDIA_ROOT, movie.movie_image.name))
+                except:
+                    pass
+
+            # Delete video file
+            if movie.movie_video:
+                try:
+                    os.remove(os.path.join(settings.MEDIA_ROOT, movie.movie_video.name))
+                except:
+                    pass
+
+            movie.delete()
+            return Response({'message': 'Movie deleted successfully'}, status=status.HTTP_200_OK)
+        except Movies.DoesNotExist:
+            return Response({'error': 'Movie not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 class put(APIView):
     def put(self,request,pk):
         try:
