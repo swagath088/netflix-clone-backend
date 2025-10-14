@@ -62,31 +62,46 @@ class get(APIView):
         serializer = Movieserializer(movies, many=True)
         return Response(serializer.data)
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.conf import settings
+import os
+from .models import Movies
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.conf import settings
+import os
+from .models import Movies
+
 class DeleteMovie(APIView):
     def delete(self, request, pk):
         try:
             movie = Movies.objects.get(movie_no=pk)
 
-            # Delete image file
+            # Try deleting image
             if movie.movie_image:
-                try:
-                    os.remove(os.path.join(settings.MEDIA_ROOT, movie.movie_image.name))
-                except:
-                    pass
+                image_path = os.path.join(settings.MEDIA_ROOT, movie.movie_image.name)
+                if os.path.exists(image_path):
+                    os.remove(image_path)
 
-            # Delete video file
+            # Try deleting video
             if movie.movie_video:
-                try:
-                    os.remove(os.path.join(settings.MEDIA_ROOT, movie.movie_video.name))
-                except:
-                    pass
+                video_path = os.path.join(settings.MEDIA_ROOT, movie.movie_video.name)
+                if os.path.exists(video_path):
+                    os.remove(video_path)
 
             movie.delete()
             return Response({'message': 'Movie deleted successfully'}, status=status.HTTP_200_OK)
+
         except Movies.DoesNotExist:
             return Response({'error': 'Movie not found'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 class put(APIView):
     def put(self,request,pk):
