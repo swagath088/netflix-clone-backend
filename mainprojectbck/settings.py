@@ -151,6 +151,7 @@ DEBUG = True
 
 # settings.py
 CORS_ALLOW_ALL_ORIGINS = True  # for testing only
+CORS_ALLOW_CREDENTIALS = True
 
 
 
@@ -162,3 +163,12 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 ALLOWED_HOSTS = ['netflix-clone-backend-1-4ynr.onrender.com', '127.0.0.1', 'localhost']
 
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://netflix-clone-django-react.vercel.app",  # your Vercel URL
+]
+
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "netflix-clone-backend-1-4ynr.onrender.com",  # your deployed backend host
+]
