@@ -162,10 +162,19 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 ALLOWED_HOSTS = ['netflix-clone-backend-1-4ynr.onrender.com', '127.0.0.1', 'localhost']
 
-
 CSRF_TRUSTED_ORIGINS = [
-    "https://netflix-clone-django-react.vercel.app",  # your Vercel URL
+    "https://netflix-clone-django-react.vercel.app",
+    "https://netflix-clone-django-react-swagaths-projects.vercel.app",
 ]
+
+CORS_ALLOWED_ORIGINS = [
+    "https://netflix-clone-django-react.vercel.app",
+    "https://netflix-clone-django-react-swagaths-projects.vercel.app",
+]
+
+
+
+
 
 ALLOWED_HOSTS = [
     "127.0.0.1",
