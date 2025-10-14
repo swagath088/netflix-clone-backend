@@ -13,6 +13,13 @@ import re
 from django.conf import settings
 from django.http import FileResponse
 from rest_framework.authtoken.models import Token
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import AllowAny
+from rest_framework.views import APIView
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+
 
 from .models import Movies
 # Create your views here.
@@ -76,30 +83,79 @@ from django.conf import settings
 import os
 from .models import Movies
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.conf import settings
+from mainapp.models import Movies
+import os
+
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.conf import settings
+import os
+from .models import Movies
+
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+import os
+from django.conf import settings
+from .models import Movies
+
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Movies
+import os
+from django.conf import settings
+
+# views.py
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Movies
+import os
+from django.conf import settings
+
+@method_decorator(csrf_exempt, name='dispatch')  # ✅ important for frontend DELETE
 class DeleteMovie(APIView):
     def delete(self, request, pk):
         try:
             movie = Movies.objects.get(movie_no=pk)
 
-            # Try deleting image
-            if movie.movie_image:
+            # Delete image
+            if movie.movie_image and movie.movie_image.name:
                 image_path = os.path.join(settings.MEDIA_ROOT, movie.movie_image.name)
                 if os.path.exists(image_path):
                     os.remove(image_path)
 
-            # Try deleting video
-            if movie.movie_video:
+            # Delete video
+            if movie.movie_video and movie.movie_video.name:
                 video_path = os.path.join(settings.MEDIA_ROOT, movie.movie_video.name)
                 if os.path.exists(video_path):
                     os.remove(video_path)
 
             movie.delete()
             return Response({'message': 'Movie deleted successfully'}, status=status.HTTP_200_OK)
-
         except Movies.DoesNotExist:
             return Response({'error': 'Movie not found'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
 
 
 
