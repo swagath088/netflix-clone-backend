@@ -11,12 +11,12 @@ db.sqlite3
 
 # Environment variables
 .env
+.env.local
+.env.bak
 
 # Virtual environment
 venv/
 .env/
-.env.bak/
-.env.local
 
 # Static and media files
 /staticfiles/
@@ -24,7 +24,8 @@ venv/
 /uploads/
 /tmp/
 
-/*.mp4
+# Video files
+*.mp4
 *.mkv
 *.avi
 *.mov

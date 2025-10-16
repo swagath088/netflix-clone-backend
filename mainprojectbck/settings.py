@@ -1,19 +1,31 @@
 import os
 from pathlib import Path
-import dj_database_url
+from dotenv import load_dotenv
+import cloudinary
+
+# Load environment variables
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ----------------------
 # SECURITY
-# ----------------------
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-local-key')
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
+SECRET_KEY = os.getenv('SECRET_KEY')
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
-# ----------------------
-# INSTALLED APPS
-# ----------------------
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://netflix-clone-backend-1-4ynr.onrender.com',
+]
+
+# Cloudinary configuration
+cloudinary.config(
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.getenv('CLOUDINARY_API_KEY'),
+    api_secret=os.getenv('CLOUDINARY_API_SECRET')
+)
+
+# Apps
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -22,19 +34,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'corsheaders',
-    'rest_framework',
-    'rest_framework.authtoken',
-
-    'mainapp.apps.MainappConfig',
-
+    'mainapp',
     'cloudinary',
     'cloudinary_storage',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'corsheaders',
 ]
 
-# ----------------------
-# MIDDLEWARE
-# ----------------------
+# Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -46,18 +54,16 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# ----------------------
-# URLS & WSGI
-# ----------------------
 ROOT_URLCONF = 'mainprojectbck.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -68,16 +74,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'mainprojectbck.wsgi.application'
 
-# ----------------------
-# DATABASE
-# ----------------------
+# Database (Render PostgreSQL)
 DATABASES = {
-    'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT', '5432'),
+    }
 }
 
-# ----------------------
-# PASSWORD VALIDATION
-# ----------------------
+# Password validators
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -85,51 +94,30 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# ----------------------
-# LANGUAGE & TIME
-# ----------------------
+# Internationalization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# ----------------------
-# STATIC & MEDIA
-# ----------------------
+# Static files
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Media files (Cloudinary)
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# ----------------------
-# CLOUDINARY CONFIG
-# ----------------------
-USE_CLOUDINARY = os.environ.get('USE_CLOUDINARY', 'False') == 'True'
-
-if USE_CLOUDINARY:
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-    CLOUDINARY_STORAGE = {
-        'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
-        'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
-        'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
-    }
-else:
-    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
-
-# ----------------------
-# REST FRAMEWORK
-# ----------------------
+# REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-    ],
+    ]
 }
 
-# ----------------------
-# CORS & CSRF
-# ----------------------
+# CORS settings
 CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
@@ -140,10 +128,6 @@ CORS_ALLOWED_ORIGINS = [
     "https://netflix-clone-backend-1-4ynr.onrender.com",
 ]
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://netflix-clone-django-react.vercel.app",
-    "https://netflix-clone-django-react-swagaths-projects.vercel.app",
-    "https://netflix-clone-backend-1-4ynr.onrender.com",
-]
-
+# Security headers for Render
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

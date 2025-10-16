@@ -4,10 +4,8 @@ django-cors-headers==4.9.0
 dj-database-url==3.0.1
 psycopg2-binary==2.9.11
 pillow==11.3.0
-sqlparse==0.5.3
 tzdata==2025.2
 python-dotenv==1.0.0
 gunicorn==21.2.0
-PyMySQL==1.1.2
 cloudinary==1.32.0
 django-cloudinary-storage==0.3.0
