@@ -65,16 +65,18 @@ TEMPLATES = [
 WSGI_APPLICATION = 'mainprojectbck.wsgi.application'
 
 # Database
-SECRET_KEY = os.getenv("SECRET_KEY")
-DEBUG = os.getenv("DEBUG") == "True"  # converts string to boolean
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(",")
+load_dotenv()
 
-import dj_database_url
+BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Security
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-local-key')
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
+
+# Database
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL')
-    )
+    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
 }
 
 # Password validation
