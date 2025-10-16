@@ -1,20 +1,48 @@
 # Python cache
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+*.pdb
 
 # Django database
 db.sqlite3
 *.sqlite3
 
-# Logs
-*.log
+# Environment variables
+.env
 
-# Media files
-media/
-*.mp4
+# Virtual environment
+venv/
+.env/
+.env.bak/
+.env.local
+
+# Static and media files
+/staticfiles/
+/media/
+/uploads/
+/tmp/
+
+/*.mp4
 *.mkv
 *.avi
 *.mov
 
-# Environment variables
-.env
+# Logs
+*.log
+logs/
+*.log.*
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node (if frontend included)
+node_modules/
