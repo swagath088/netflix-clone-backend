@@ -7,18 +7,21 @@ import os
 import dj_database_url
 from dotenv import load_dotenv
 
-# Load .env file
+# Load .env file (used locally; Render uses environment variables directly)
 load_dotenv()
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Paths
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-local-key')  # use environment variable in production
-DEBUG = os.getenv('DEBUG', 'True') == 'True'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-local-key')
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 # Allowed hosts
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost,netflix-clone-backend-1-4ynr.onrender.com').split(',')
+ALLOWED_HOSTS = os.getenv(
+    'ALLOWED_HOSTS', 
+    '127.0.0.1,localhost,netflix-clone-backend-1-4ynr.onrender.com'
+).split(',')
 
 # Application definition
 INSTALLED_APPS = [
@@ -36,7 +39,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'corsheaders.middleware.CorsMiddleware',  # 👈 keep at top after security
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -65,16 +68,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'mainprojectbck.wsgi.application'
 
 # Database
-load_dotenv()
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-# Security
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-local-key')
-DEBUG = os.getenv('DEBUG', 'True') == 'True'
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
-
-# Database
 DATABASES = {
     'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
 }
@@ -96,7 +89,6 @@ USE_TZ = True
 # Static & media files
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
@@ -104,18 +96,19 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS settings
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "https://netflix-clone-django-react.vercel.app",
     "https://netflix-clone-django-react-swagaths-projects.vercel.app",
+    "https://netflix-clone-backend-1-4ynr.onrender.com",
 ]
-CORS_ALLOW_METHODS = ['DELETE','GET','OPTIONS','PATCH','POST','PUT']
 
 # CSRF trusted origins
 CSRF_TRUSTED_ORIGINS = [
     "https://netflix-clone-django-react.vercel.app",
     "https://netflix-clone-django-react-swagaths-projects.vercel.app",
+    "https://netflix-clone-backend-1-4ynr.onrender.com",
 ]
