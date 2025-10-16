@@ -1,16 +1,20 @@
+# Python cache
 __pycache__/
 *.pyc
+
+# Django database
 db.sqlite3
-.env
+*.sqlite3
+
+# Logs
 *.log
 
-# Ignore media files and database
+# Media files
 media/
 *.mp4
 *.mkv
 *.avi
 *.mov
-*.sqlite3
-__pycache__/
-*.pyc
+
+# Environment variables
 .env
