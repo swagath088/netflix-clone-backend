@@ -1,11 +1,6 @@
-"""
-Django settings for mainprojectbck project.
-"""
-
 from pathlib import Path
 import os
 import dj_database_url
-from decouple import config
 
 # ----------------------
 # Paths
@@ -15,15 +10,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ----------------------
 # Security
 # ----------------------
-SECRET_KEY = config('SECRET_KEY', default='django-insecure-local-key')
-DEBUG = config('DEBUG', default=True, cast=bool)
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*').split(',')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-local-key')
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+
+ALLOWED_HOSTS = ['*']  # or you can put your domains
 
 # ----------------------
 # Installed Apps
 # ----------------------
 INSTALLED_APPS = [
-    # Django default apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -31,15 +26,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Third-party apps
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
+    'mainapp.apps.MainappConfig',
+
     'cloudinary',
     'cloudinary_storage',
-
-    # Your apps
-    'mainapp.apps.MainappConfig',
 ]
 
 # ----------------------
@@ -47,7 +40,7 @@ INSTALLED_APPS = [
 # ----------------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'corsheaders.middleware.CorsMiddleware',  # must be near top
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -82,7 +75,7 @@ WSGI_APPLICATION = 'mainprojectbck.wsgi.application'
 # Database
 # ----------------------
 DATABASES = {
-    'default': dj_database_url.parse(config('DATABASE_URL'))
+    'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
 }
 
 # ----------------------
@@ -112,13 +105,13 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Cloudinary for media storage
+# Cloudinary setup
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': config('CLOUDINARY_API_KEY'),
-    'API_SECRET': config('CLOUDINARY_API_SECRET'),
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
 }
 
 # ----------------------
@@ -144,16 +137,10 @@ CORS_ALLOWED_ORIGINS = [
     "https://netflix-clone-backend-1-4ynr.onrender.com",
 ]
 
-# ----------------------
-# CSRF Trusted Origins
-# ----------------------
 CSRF_TRUSTED_ORIGINS = [
     "https://netflix-clone-django-react.vercel.app",
     "https://netflix-clone-django-react-swagaths-projects.vercel.app",
     "https://netflix-clone-backend-1-4ynr.onrender.com",
 ]
 
-# ----------------------
-# Default Primary Key
-# ----------------------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
