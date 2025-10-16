@@ -11,9 +11,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Security
 # ----------------------
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-local-key')
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
-
-ALLOWED_HOSTS = ['*']  # or you can put your domains
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'  # True for local, False for production
+ALLOWED_HOSTS = ['*']  # Can restrict to your domains in production
 
 # ----------------------
 # Installed Apps
@@ -40,7 +39,7 @@ INSTALLED_APPS = [
 # ----------------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # keep near top
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -105,14 +104,21 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Cloudinary setup
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+# ----------------------
+# Cloudinary setup (optional for production)
+# ----------------------
+USE_CLOUDINARY = os.environ.get('USE_CLOUDINARY', 'False') == 'True'
 
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
-}
+if USE_CLOUDINARY:
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    CLOUDINARY_STORAGE = {
+        'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+        'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+        'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
+    }
+else:
+    # Local storage
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 # ----------------------
 # REST Framework
