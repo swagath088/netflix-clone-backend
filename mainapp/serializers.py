@@ -13,9 +13,25 @@ class Userserializer(serializers.ModelSerializer):
         fields=['username','password','email']
 
 class Movieserializer(serializers.ModelSerializer):
+    movie_image_url = serializers.SerializerMethodField()
+    movie_video_url = serializers.SerializerMethodField()
+
     class Meta:
-        model=Movies
-        fields='__all__'
+        model = Movies
+        fields = '__all__'  # keeps original fields
+        # OR list all fields if you want to avoid sending raw CloudinaryField
+
+    def get_movie_image_url(self, obj):
+        if obj.movie_image:
+            # ensure HTTPS and no extra prefix
+            return str(obj.movie_image).replace("http://", "https://")
+        return ""
+
+    def get_movie_video_url(self, obj):
+        if obj.movie_video:
+            return str(obj.movie_video).replace("http://", "https://")
+        return ""
+
 
 class Movieupdateserializer(serializers.ModelSerializer):
     movie_no = serializers.IntegerField(required=False)
