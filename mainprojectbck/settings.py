@@ -6,8 +6,6 @@ import cloudinary.uploader
 import cloudinary.api
 from typing import List
 
-CSRF_TRUSTED_ORIGINS: List[str] = []
-
 
 # ------------------------------
 # BASE DIRECTORY
@@ -31,11 +29,10 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
 print("DEBUG:", DEBUG)
 print("ALLOWED_HOSTS:", ALLOWED_HOSTS)
-print("CSRF_TRUSTED_ORIGINS:", CSRF_TRUSTED_ORIGINS)
 
 # CSRF trusted origins (for production)
 CSRF_TRUSTED_ORIGINS = [
-    "https://netflix-clone-backend-1-4ynr.onrender.com",
+    origin.strip() for origin in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if origin.strip()
 ]
 
 # ------------------------------
@@ -84,14 +81,13 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",  # MUST be above CommonMiddleware
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-
 # ------------------------------
 # ROOT URL CONFIGURATION
 # ------------------------------
