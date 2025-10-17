@@ -4,6 +4,10 @@ from dotenv import load_dotenv
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+from typing import List
+
+CSRF_TRUSTED_ORIGINS: List[str] = []
+
 
 # ------------------------------
 # BASE DIRECTORY
@@ -23,6 +27,11 @@ DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
 # Read ALLOWED_HOSTS from .env, split by comma
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+
+
+print("DEBUG:", DEBUG)
+print("ALLOWED_HOSTS:", ALLOWED_HOSTS)
+print("CSRF_TRUSTED_ORIGINS:", CSRF_TRUSTED_ORIGINS)
 
 # CSRF trusted origins (for production)
 CSRF_TRUSTED_ORIGINS = [
