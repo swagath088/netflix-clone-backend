@@ -5,35 +5,22 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 
-# ------------------------------
-# BASE DIRECTORY
-# ------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ------------------------------
-# LOAD ENVIRONMENT VARIABLES
-# ------------------------------
 load_dotenv(BASE_DIR / ".env")
 
-# ------------------------------
-# SECURITY
-# ------------------------------
 SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
-# ALLOWED_HOSTS from .env
 ALLOWED_HOSTS = [
     host.strip() for host in os.getenv("ALLOWED_HOSTS", "").split(",") if host.strip()
 ]
 
-# CSRF trusted origins (for production)
 CSRF_TRUSTED_ORIGINS = [
     origin.strip() for origin in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if origin.strip()
 ]
 
-# ------------------------------
-# CLOUDINARY CONFIG
-# ------------------------------
+# ------------------ Cloudinary ------------------
 CLOUDINARY_STORAGE = {
     "CLOUD_NAME": os.getenv("CLOUDINARY_CLOUD_NAME"),
     "API_KEY": os.getenv("CLOUDINARY_API_KEY"),
@@ -48,9 +35,7 @@ cloudinary.config(
 
 DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
-# ------------------------------
-# INSTALLED APPS
-# ------------------------------
+# ------------------ Installed apps ------------------
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -65,12 +50,10 @@ INSTALLED_APPS = [
     "corsheaders",
 ]
 
-# ------------------------------
-# MIDDLEWARE
-# ------------------------------
+# ------------------ Middleware ------------------
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",  # serve static files in production
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # Serve static files
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -80,12 +63,10 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-# ------------------------------
-# URLS AND TEMPLATES
-# ------------------------------
 ROOT_URLCONF = "mainprojectbck.urls"
 WSGI_APPLICATION = "mainprojectbck.wsgi.application"
 
+# ------------------ Templates ------------------
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -102,9 +83,7 @@ TEMPLATES = [
     },
 ]
 
-# ------------------------------
-# DATABASE (PostgreSQL)
-# ------------------------------
+# ------------------ Database ------------------
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -116,22 +95,19 @@ DATABASES = {
     }
 }
 
-# ------------------------------
-# STATIC AND MEDIA FILES
-# ------------------------------
+# ------------------ Static & Media ------------------
 STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = BASE_DIR / "staticfiles"  # for collectstatic
 STATICFILES_DIRS = [BASE_DIR / "static"]
-
-# WhiteNoise settings (production)
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-# ------------------------------
-# SECURITY & CORS
-# ------------------------------
+# ------------------ Security & CORS ------------------
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+CORS_ALLOW_ALL_ORIGINS = True  # Can restrict later
 
-CORS_ALLOW_ALL_ORIGINS = True  # You can later restrict to frontend URL
+# ------------------ Session & CSRF ------------------
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
