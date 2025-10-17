@@ -21,3 +21,5 @@ class MoviesAdmin(admin.ModelAdmin):
             )
         return "-"
     video_preview.short_description = 'Video Preview'
+
+
