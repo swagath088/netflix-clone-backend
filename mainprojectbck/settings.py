@@ -4,8 +4,6 @@ from dotenv import load_dotenv
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
-from typing import List
-
 
 # ------------------------------
 # BASE DIRECTORY
@@ -23,23 +21,18 @@ load_dotenv(BASE_DIR / ".env")
 SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
-# Read ALLOWED_HOSTS from .env, split by comma
-ALLOWED_HOSTS = [host.strip() for host in os.getenv("ALLOWED_HOSTS", "").split(",") if host.strip()]
-
-
-
-print("DEBUG:", DEBUG)
-print("ALLOWED_HOSTS:", ALLOWED_HOSTS)
+# ALLOWED_HOSTS from .env
+ALLOWED_HOSTS = [
+    host.strip() for host in os.getenv("ALLOWED_HOSTS", "").split(",") if host.strip()
+]
 
 # CSRF trusted origins (for production)
-
 CSRF_TRUSTED_ORIGINS = [
     origin.strip() for origin in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if origin.strip()
 ]
 
-
 # ------------------------------
-# CLOUDINARY CONFIGURATION
+# CLOUDINARY CONFIG
 # ------------------------------
 CLOUDINARY_STORAGE = {
     "CLOUD_NAME": os.getenv("CLOUDINARY_CLOUD_NAME"),
@@ -53,25 +46,19 @@ cloudinary.config(
     api_secret=CLOUDINARY_STORAGE["API_SECRET"],
 )
 
-# Default file storage to Cloudinary
 DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 # ------------------------------
 # INSTALLED APPS
 # ------------------------------
 INSTALLED_APPS = [
-    # Django default apps
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
-    # Your app
     "mainapp",
-
-    # Third-party apps
     "cloudinary",
     "cloudinary_storage",
     "rest_framework",
@@ -83,22 +70,22 @@ INSTALLED_APPS = [
 # ------------------------------
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # serve static files in production
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "corsheaders.middleware.CorsMiddleware",  # MUST be above CommonMiddleware
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-# ------------------------------
-# ROOT URL CONFIGURATION
-# ------------------------------
-ROOT_URLCONF = "mainprojectbck.urls"
 
 # ------------------------------
-# TEMPLATES
+# URLS AND TEMPLATES
 # ------------------------------
+ROOT_URLCONF = "mainprojectbck.urls"
+WSGI_APPLICATION = "mainprojectbck.wsgi.application"
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -116,11 +103,6 @@ TEMPLATES = [
 ]
 
 # ------------------------------
-# WSGI APPLICATION
-# ------------------------------
-WSGI_APPLICATION = "mainprojectbck.wsgi.application"
-
-# ------------------------------
 # DATABASE (PostgreSQL)
 # ------------------------------
 DATABASES = {
@@ -135,23 +117,21 @@ DATABASES = {
 }
 
 # ------------------------------
-# MEDIA AND STATIC FILES
+# STATIC AND MEDIA FILES
 # ------------------------------
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"  # fallback if you want local storage
-
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
+STATICFILES_DIRS = [BASE_DIR / "static"]
+
+# WhiteNoise settings (production)
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 # ------------------------------
-# SECURITY FOR PRODUCTION
+# SECURITY & CORS
 # ------------------------------
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-# ------------------------------
-# CORS SETTINGS
-# ------------------------------
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = True  # You can later restrict to frontend URL
