@@ -202,3 +202,13 @@ class get_one_movie(APIView):
 
 
 
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
+cloudinary.config( 
+  cloud_name = "dcguhkbhj", 
+  api_key = "292771931593114", 
+  api_secret = "zHqTM-v2a7ilpXr-2CZBlbsC6wg"
+)
+
