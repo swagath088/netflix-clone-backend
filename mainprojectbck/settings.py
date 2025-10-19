@@ -112,3 +112,8 @@ CORS_ALLOW_ALL_ORIGINS = True  # Can restrict later
 # ------------------ Session & CSRF ------------------
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
+
+# settings.py
+DATA_UPLOAD_MAX_MEMORY_SIZE = 52428800  # 50 MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 52428800  # 50 MB
+

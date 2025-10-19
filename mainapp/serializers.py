@@ -1,36 +1,26 @@
-
 from django.db import models
-from rest_framework import serializers
 from django.contrib import admin
 from django.contrib.auth.models import User
-from .models import Movies
 
+from rest_framework import serializers, status
+from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.response import Response
+
+from .models import Movies
 
 # Create your models here.
 class Userserializer(serializers.ModelSerializer):
     class Meta:
-        model=User
-        fields=['username','password','email']
+        model = User
+        fields = ['username', 'password', 'email']
 
+
+# Serializers for Movies
 class Movieserializer(serializers.ModelSerializer):
-    movie_image_url = serializers.SerializerMethodField()
-    movie_video_url = serializers.SerializerMethodField()
-
     class Meta:
         model = Movies
-        fields = '__all__'  # keeps original fields
-        # OR list all fields if you want to avoid sending raw CloudinaryField
-
-    def get_movie_image_url(self, obj):
-        if obj.movie_image:
-            # ensure HTTPS and no extra prefix
-            return str(obj.movie_image).replace("http://", "https://")
-        return ""
-
-    def get_movie_video_url(self, obj):
-        if obj.movie_video:
-            return str(obj.movie_video).replace("http://", "https://")
-        return ""
+        fields = "__all__"
 
 
 class Movieupdateserializer(serializers.ModelSerializer):
@@ -42,5 +32,3 @@ class Movieupdateserializer(serializers.ModelSerializer):
     class Meta:
         model = Movies
         fields = ['movie_no', 'movie_name', 'movie_desc', 'movie_rating']
-
-    

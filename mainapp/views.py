@@ -1,27 +1,40 @@
+# Django imports
 from django.shortcuts import render
-from . serializers import Userserializer,Movieserializer,Movieupdateserializer
-from rest_framework import status
-from rest_framework.status import HTTP_200_OK,HTTP_201_CREATED,HTTP_400_BAD_REQUEST
-from rest_framework.exceptions import ValidationError
-from django.contrib.auth.hashers import make_password
-from rest_framework.response import Response
-from rest_framework.views import APIView
-import os
 from django.contrib.auth import authenticate
+from django.contrib.auth.hashers import make_password
 from django.db.models import Q
-import re
 from django.conf import settings
 from django.http import FileResponse
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+import os
+import re
+
+# REST framework imports
+from rest_framework import status
+from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_400_BAD_REQUEST
+from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import AllowAny
-from rest_framework.views import APIView
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
 
-
+# Local imports
 from .models import Movies
+from .serializers import Userserializer, Movieserializer, Movieupdateserializer
+
+# Cloudinary imports
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+from cloudinary import exceptions as cloudinary_exceptions
+
+# Python standard library
+import traceback
+
 # Create your views here.
 class register(APIView):
     def post(self,request):
@@ -34,14 +47,67 @@ class register(APIView):
             return Response(status=HTTP_201_CREATED)
         else:
             return Response( obj.errors,status=HTTP_400_BAD_REQUEST)
-class Add(APIView):
-    def post(self,request):
-       obj= Movieserializer(data=request.data)
-       if obj.is_valid():
-           obj.save()
-           return Response(status=HTTP_201_CREATED)
-       else:
-           return Response(obj.errors,status=HTTP_400_BAD_REQUEST)
+
+@method_decorator(csrf_exempt, name='dispatch')
+class UploadMedia(APIView):
+    parser_classes = [MultiPartParser, FormParser]
+
+    def post(self, request):
+        try:
+            image_file = request.FILES.get("movie_image")
+            video_file = request.FILES.get("movie_video")
+
+            if not image_file and not video_file:
+                return Response({"error": "No files uploaded"}, status=400)
+
+            # Upload image
+            image_url = None
+            if image_file:
+                resp = cloudinary.uploader.upload(image_file, resource_type="image")
+                image_url = resp.get("secure_url")
+
+            # Upload video
+            video_url = None
+            if video_file:
+                resp = cloudinary.uploader.upload(
+                    video_file,
+                    resource_type="video",
+                    timeout=300  # allow big videos
+                )
+                video_url = resp.get("secure_url")
+
+            return Response({"image_url": image_url, "video_url": video_url}, status=201)
+
+        except Exception as e:
+            traceback.print_exc()
+            return Response({"error": str(e)}, status=500)
+
+@method_decorator(csrf_exempt, name='dispatch')
+class AddMovie(APIView):
+    def post(self, request):
+        try:
+            movie_name = request.data.get("movie_name")
+            movie_desc = request.data.get("movie_desc")
+            movie_rating = int(request.data.get("movie_rating", 0))
+            movie_image = request.data.get("movie_image")
+            movie_video = request.data.get("movie_video")
+
+            if not movie_name or not movie_image or not movie_video:
+                return Response({"error": "Required fields missing"}, status=400)
+
+            movie = Movies.objects.create(
+                movie_name=movie_name,
+                movie_desc=movie_desc,
+                movie_rating=movie_rating,
+                movie_image=movie_image,
+                movie_video=movie_video
+            )
+
+            return Response({"message": "Movie added successfully!"}, status=201)
+
+        except Exception as e:
+            traceback.print_exc()
+            return Response({"error": str(e)}, status=500)
 
 class show(APIView):
     def get(self,request):
@@ -69,95 +135,17 @@ class get(APIView):
         serializer = Movieserializer(movies, many=True)
         return Response(serializer.data)
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from django.conf import settings
-import os
-from .models import Movies
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from django.conf import settings
-import os
-from .models import Movies
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from django.conf import settings
-from mainapp.models import Movies
-import os
-
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from django.conf import settings
-import os
-from .models import Movies
-
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-import os
-from django.conf import settings
-from .models import Movies
-
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from .models import Movies
-import os
-from django.conf import settings
-
-# views.py
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from .models import Movies
-import os
-from django.conf import settings
-
-@method_decorator(csrf_exempt, name='dispatch')  # ✅ important for frontend DELETE
+@method_decorator(csrf_exempt, name='dispatch')
 class DeleteMovie(APIView):
     def delete(self, request, pk):
         try:
             movie = Movies.objects.get(movie_no=pk)
-
-            # Delete image
-            if movie.movie_image and movie.movie_image.name:
-                image_path = os.path.join(settings.MEDIA_ROOT, movie.movie_image.name)
-                if os.path.exists(image_path):
-                    os.remove(image_path)
-
-            # Delete video
-            if movie.movie_video and movie.movie_video.name:
-                video_path = os.path.join(settings.MEDIA_ROOT, movie.movie_video.name)
-                if os.path.exists(video_path):
-                    os.remove(video_path)
-
             movie.delete()
             return Response({'message': 'Movie deleted successfully'}, status=status.HTTP_200_OK)
         except Movies.DoesNotExist:
             return Response({'error': 'Movie not found'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
-
-
-
-
 
 class put(APIView):
     def put(self,request,pk):
@@ -187,24 +175,25 @@ class Login(APIView):
             }, status=status.HTTP_200_OK)
         else:
             return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
-        
-class get_one_movie(APIView):
-    def get(self, request):
+
+class get(APIView):
+    def get(self, request, pk):
+        """
+        Search by movie_no (if numeric) or movie_name (partial, case-insensitive)
+        """
         try:
-            movie = Movies.objects.get(movie_no=1)  # or Movies.objects.first()
-            serializer = Movieserializer(movie)
-            return Response(serializer.data, status=HTTP_200_OK)
-        except Movies.DoesNotExist:
-            return Response({"error": "Movie not found"}, status=HTTP_400_BAD_REQUEST)
-        
+            movies = Movies.objects.filter(
+                Q(movie_no=pk) | Q(movie_name__icontains=pk)
+            )
 
+            if not movies.exists():
+                return Response({'error': 'Movie not found'}, status=status.HTTP_404_NOT_FOUND)
 
+            serializer = Movieserializer(movies, many=True)
+            return Response(serializer.data)
 
-
-
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 cloudinary.config( 
   cloud_name = "dcguhkbhj", 
@@ -212,3 +201,11 @@ cloudinary.config(
   api_secret = "zHqTM-v2a7ilpXr-2CZBlbsC6wg"
 )
 
+class SearchMovie(APIView):
+    def get(self, request):
+        name = request.GET.get('name', '')
+        if name:
+            movies = Movies.objects.filter(movie_name__icontains=name)
+            serializer = Movieserializer(movies, many=True)
+            return Response(serializer.data)
+        return Response([], status=404)
