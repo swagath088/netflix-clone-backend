@@ -123,18 +123,6 @@ class StreamVideo(APIView):
         # open file and return it in chunks
         return FileResponse(open(file_path, 'rb'), content_type='video/mp4')
 
-class get(APIView):
-    def get(self, request, pk):
-        movies = Movies.objects.filter(
-            Q(movie_no__iexact=pk) | Q(movie_name__icontains=pk)
-        )
-
-        if not movies.exists():
-            return Response({'error': 'Movie not found'}, status=HTTP_400_BAD_REQUEST)
-
-        serializer = Movieserializer(movies, many=True)
-        return Response(serializer.data)
-
 @method_decorator(csrf_exempt, name='dispatch')
 class DeleteMovie(APIView):
     def delete(self, request, pk):
@@ -178,9 +166,6 @@ class Login(APIView):
 
 class get(APIView):
     def get(self, request, pk):
-        """
-        Search by movie_no (if numeric) or movie_name (partial, case-insensitive)
-        """
         try:
             movies = Movies.objects.filter(
                 Q(movie_no=pk) | Q(movie_name__icontains=pk)

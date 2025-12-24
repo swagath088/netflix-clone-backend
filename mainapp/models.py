@@ -6,7 +6,7 @@ class Movies(models.Model):
     movie_desc = models.TextField()
     movie_rating = models.IntegerField()
     
-    # ✅ Change these to URLField
+ 
     movie_image = models.URLField(max_length=500, blank=True, null=True)
     movie_video = models.URLField(max_length=500, blank=True, null=True)
 
