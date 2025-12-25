@@ -1,77 +1,83 @@
-# Netflix Clone Backend (Django)
+📌 Netflix Clone Backend (Django)
 
-This is the backend for a Netflix Clone application, built using Django and Django REST Framework. It provides API endpoints for managing users, movies, images, and videos.
+This repository contains the backend for a Netflix Clone web application built using Django and Django REST Framework.
+It provides REST APIs for user authentication and movie management.
 
----
+🚀 Features
+🔐 User Authentication
 
-## Features
+User registration and login
 
-- **User Authentication**
-  - Register, Login, Logout
-  - Superuser privileges to add, modify, or delete movies
-- **Movie Management**
-  - Movies stored with images and video links
-  - REST API endpoints for frontend consumption
-- **Admin Features**
-  - Superuser can manage all movies and media directly
+Role-based access (normal users & admin users)
 
----
+Secure logout functionality
 
-## Tech Stack
+🎬 Movie Management
 
-- **Backend:** Django, Django REST Framework
-- **Database:** MySQL (or SQLite for local testing)
-- **Image Handling:** Pillow
-- **MySQL Driver:** PyMySQL
+Browse movies by category (Action, Romance, Web Series, etc.)
 
----
+View movie details
 
-## Prerequisites
+Search movies by name
 
-- Python 3.13+
-- MySQL server (if using MySQL)
-- Virtual environment (`venv`)
+Movie data stored with image and video URLs
 
----
+🛠 Admin Functionality
 
-## Setup Instructions
+Admin users can add, update, and delete movies
 
-### 1. Clone the repository
-```bash
+Content managed through the Django admin panel
+
+🧰 Tech Stack
+
+Backend: Django, Django REST Framework
+
+Database: PostgreSQL (Neon – cloud hosted)
+
+Media Storage: Cloudinary
+
+Deployment:
+
+Backend: Render
+
+Frontend: Vercel
+
+⚙️ Setup Instructions (Local)
+1. Clone the repository
 git clone https://github.com/swagath088/netflix-clone-backend.git
 cd netflix-clone-backend
 
-2. Create a virtual environment and install dependencies
+2. Create and activate virtual environment
 python -m venv venv
 
-# Activate virtual environment
-# Windows:
+# Windows
 venv\Scripts\activate
-# Mac/Linux:
+
+# Mac/Linux
 source venv/bin/activate
 
+3. Install dependencies
 pip install -r requirements.txt
-3. Database setup
+
+4. Apply migrations
 python manage.py makemigrations
 python manage.py migrate
-4. Media sample
 
-Add small sample media to demonstrate the app:
-media_sample/
-├── images/
-│   └── sample.jpg
-└── movies/
-    └── sample.mp4
-5. Create a superuser
+5. Create superuser
 python manage.py createsuperuser
+
 6. Run the server
 python manage.py runserver
-Access the Django admin panel at: http://127.0.0.1:8000/admin/
 
-Notes
 
-Pillow must be installed to handle image fields.
+Access the admin panel at:
 
-PyMySQL is used as the MySQL driver for Django.
+http://127.0.0.1:8000/admin/
 
-This backend works with the Netflix Clone frontend.
+🌐 Live Deployment
+
+Backend deployed on Render
+
+Frontend deployed on Vercel
+
+This backend works in conjunction with the Netflix Clone frontend to provide a complete full-stack streaming platform experience.
